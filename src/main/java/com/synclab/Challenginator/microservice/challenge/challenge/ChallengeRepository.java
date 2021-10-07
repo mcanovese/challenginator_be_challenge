@@ -14,8 +14,12 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long>{
     @Override
     Optional<Challenge> findById(Long aLong);
 
-    List<Challenge> findByIdChallenged(Long data);
-    List<Challenge> findByIdChallenger(Long data);
+    //seleziono tutte le sfide sia passive che attive dell'utente
+    @Query("SELECT u FROM Challenge u WHERE u.challenged = ?1 OR u.challenger = ?1")
+    List<Challenge> getAllChallenge (Long id);
+
+    List<Challenge> findChallengesByChallenged(Long data); //sfidato
+    List<Challenge> findChallengesByChallenger(Long data); //sfidante
 
 
 }

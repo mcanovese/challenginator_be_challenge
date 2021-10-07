@@ -1,8 +1,16 @@
 package com.synclab.Challenginator.microservice.challenge.challenge;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import io.swagger.v3.core.util.Json;
+import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -10,27 +18,47 @@ import java.util.Optional;
 @RestController
 public class ChallengeController {
 
+
     private ChallengeService challengeService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
 
     public ChallengeController(ChallengeService challengeService) {
         this.challengeService = challengeService;
     }
 
-    /*
     @GetMapping("/challenge")
-    public String getChallenge() {
-        //return challengeService.getUserChallenge(id);
-
-        return "ciao";
-
+    public List<Challenge> getChallenge() {
+        return challengeService.getALlChallenge(112L);
     }
 
+    @GetMapping("/challenge/{id}")
+    public Optional<Challenge> getChallengeById(@PathVariable Long id) {
+        return challengeService.getChallengeById(id);
+    }
 
-     */
+    @PutMapping("/challenge")
+    public Challenge updateChallenge(@RequestBody Challenge challenge){
+        return challengeService.updateChallenge(challenge);
+    }
 
+    @DeleteMapping("/challenge/{id}")
+    public String deleteChallenge(@PathVariable Long id){
+         challengeService.deleteChallenge(id);
+         return "{\"operation\":ok}";
+    }
 
+    @GetMapping("/challenge/test")
+    public String test(@RequestHeader(name= "Authorization") String jwt){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", jwt);
+        HttpEntity <String> entity = new HttpEntity<String>(headers);
 
+        return restTemplate.exchange("http://localhost:8080/user/authcheck", HttpMethod.POST, entity, String.class).getBody();
 
+    }
 
 
 

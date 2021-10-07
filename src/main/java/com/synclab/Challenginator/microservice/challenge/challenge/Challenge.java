@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @Getter
@@ -24,9 +23,9 @@ public class Challenge {
     private Long id;
 
     private LocalDateTime timestamp_creation;
-    private Long idChallenger; //sfidante
+    private Long challenger; //sfidante
 
-    private Long idChallenged; //sfidato
+    private Long challenged; //sfidato
     private String title;
     private String description;
     private Long deadline;
@@ -47,8 +46,8 @@ public class Challenge {
                      Long deadline,
                      ChallengeStatus status) {
         this.timestamp_creation = timestamp_creation;
-        this.idChallenger = idChallenger;
-        this.idChallenged = idChallenged;
+        this.challenger = idChallenger;
+        this.challenged = idChallenged;
         this.title = title;
         this.description = description;
         this.deadline = deadline;
