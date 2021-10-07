@@ -5,9 +5,7 @@ import io.swagger.v3.core.util.Json;
 import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,7 +28,9 @@ public class ChallengeController {
     }
 
     @GetMapping("/challenge")
-    public List<Challenge> getChallenge() {
+    public List<Challenge> getChallenge(@RequestHeader(name="Authorization") String jwt) throws Exception {
+
+        challengeService.authCheck(jwt);
         return challengeService.getALlChallenge(112L);
     }
 
@@ -50,14 +50,13 @@ public class ChallengeController {
          return "{\"operation\":ok}";
     }
 
+
+   // TEST PER COMUNICAZIONE CON REST TEMPLATE
+
     @GetMapping("/challenge/test")
-    public String test(@RequestHeader(name= "Authorization") String jwt){
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", jwt);
-        HttpEntity <String> entity = new HttpEntity<String>(headers);
-
-        return restTemplate.exchange("http://localhost:8080/user/authcheck", HttpMethod.POST, entity, String.class).getBody();
-
+    public Boolean test(@RequestHeader(name= "Authorization") String jwt) throws Exception {
+        challengeService.authCheck(jwt);
+        return true;
     }
 
 
