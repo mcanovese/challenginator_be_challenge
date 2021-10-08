@@ -22,4 +22,7 @@ public class InsertRequest {
     private final Long deadline;
     private final Long idChallenged;
 
+
+
+
 }

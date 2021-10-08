@@ -1,12 +1,10 @@
 package com.synclab.Challenginator.microservice.challenge.insertChallenge;
 
+import com.synclab.Challenginator.microservice.challenge.challenge.ChallengeService;
 import lombok.AllArgsConstructor;
 import org.hibernate.sql.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -16,11 +14,13 @@ public class InsertController {
 
 
     private InsertService insertService;
+    private ChallengeService challengeService;
 
 
     @PostMapping
-    public String insert(@RequestBody InsertRequest request){
-        return insertService.insert(request);
+    public String insert(@RequestBody InsertRequest request, @RequestHeader(name="Authorization") String jwt) throws Exception{
+        Long userid = challengeService.authCheck(jwt);
+        return insertService.insert(request,userid,jwt);
 
     }
 

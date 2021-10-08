@@ -33,7 +33,7 @@ public class Challenge {
     @Enumerated(EnumType.STRING)
     private ChallengeStatus status;
     private LocalDateTime timestamp_acceptance;
-    private Long id_evaluator;
+    private Long evaluator;
 
     @Enumerated(EnumType.STRING)
     private ChallengeResult result;
@@ -44,7 +44,8 @@ public class Challenge {
                      String title,
                      String description,
                      Long deadline,
-                     ChallengeStatus status) {
+                     ChallengeStatus status,
+                     Long evaluator) {
         this.timestamp_creation = timestamp_creation;
         this.challenger = idChallenger;
         this.challenged = idChallenged;
@@ -52,5 +53,6 @@ public class Challenge {
         this.description = description;
         this.deadline = deadline;
         this.status = status;
+        this.evaluator = evaluator;
     }
 }
