@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 
-
 /*
  Inserimento di una nuova sfida, l'utente che la invia sta sfidando un terzo
  */

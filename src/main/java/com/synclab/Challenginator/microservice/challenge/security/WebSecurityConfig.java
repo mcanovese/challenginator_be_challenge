@@ -1,4 +1,6 @@
+
 package com.synclab.Challenginator.microservice.challenge.security;
+
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +13,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.cors().and().csrf().disable()
+
+        .authorizeRequests()
+                .antMatchers("/challenge/**").permitAll();
+
+
     }
 
 }
+
+

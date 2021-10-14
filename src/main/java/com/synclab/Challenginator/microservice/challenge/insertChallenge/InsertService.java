@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -49,7 +50,7 @@ public class InsertService {
 
 
 
-    public String insert(InsertRequest request, Long userid, String jwt) throws JsonProcessingException {
+    public HttpStatus insert(InsertRequest request, Long userid, String jwt) throws JsonProcessingException {
 
         Long evaluator = this.getEvaluator(request.getIdChallenged(),jwt);
 

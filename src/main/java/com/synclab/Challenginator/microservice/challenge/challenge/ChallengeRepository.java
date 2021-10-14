@@ -17,12 +17,12 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long>{
     @Query("SELECT u FROM Challenge u WHERE u.challenged = ?1 OR u.challenger = ?1")
     List<Challenge> getAllChallenge (Long id);
 
+    @Query("SELECT s FROM Challenge s WHERE s.status = ?1 AND s.challenger = ?2 OR s.challenged = ?2")
+    List<Challenge> getUserChallengeByStatus(ChallengeStatus status, Long id);
+
+
     List<Challenge> findChallengesByChallenged(Long data); //sfidato
     List<Challenge> findChallengesByChallenger(Long data); //sfidante
     Challenge getChallengeById(Long id);
-
-
-
-
 
 }

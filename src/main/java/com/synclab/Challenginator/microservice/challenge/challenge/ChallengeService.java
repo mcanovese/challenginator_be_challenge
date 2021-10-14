@@ -4,14 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.naming.ldap.Control;
+
+import javax.management.BadAttributeValueExpException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class ChallengeService {
@@ -47,60 +50,71 @@ public class ChallengeService {
         return challengeRepository.getChallengeById(id);
     }
 
-    public Challenge updateChallenge(Challenge challenge){
-        return challengeRepository.save(challenge);
+    public boolean updateChallenge(Challenge challenge){
+        Challenge updated =  challengeRepository.save(challenge);
+        if(updated.getId() == challenge.getId()) return true;
+        else return false;
+
+
     }
 
-    public String insertNewChallenge(Challenge challenge){
+    public HttpStatus insertNewChallenge(Challenge challenge){
         challengeRepository.save(challenge);
-
-        return "success - challenge inserita";
+       return HttpStatus.OK;
     }
 
-    public String evaluateChallenge(ValutatorRequest request, Long valutator){
+    public HttpStatus evaluateChallenge(ValutatorRequest request, Long valutator){
         Challenge challengeToEvaluate = getChallengeById(request.getChallengeId());
         //verifica valutatore
         if(challengeToEvaluate.getEvaluator() == valutator){
             challengeToEvaluate.setResult(request.getResult());
             updateChallenge(challengeToEvaluate);
-            return "evaluation ok";
-        } else return "error valuator id";
-
+            return HttpStatus.OK;
+        } else return HttpStatus.CONFLICT;
     }
 
-    public String userChallengeOperation(ControlRequest request, Long userId){
+    public HttpStatus userChallengeOperation(ControlRequest request, Long userId){
         Challenge challengeToOperate = getChallengeById(request.getChallengeId());
 
-        if(challengeToOperate.getChallenged() != userId) return "Error - only challenged can operate";
+        if(challengeToOperate.getChallenged() != userId) return HttpStatus.BAD_REQUEST;
+
 
         if(request.isAccept()){
             challengeToOperate.setTimestamp_acceptance(LocalDateTime.now());
             challengeToOperate.setStatus(ChallengeStatus.ACCEPTED);
             updateChallenge(challengeToOperate);
-            return "challenge accepted";
+            return HttpStatus.OK;
         }
 
         if(request.isGiveup()){
             challengeToOperate.setResult(ChallengeResult.GIVEUP);
             challengeToOperate.setStatus(ChallengeStatus.TERMINATED);
             updateChallenge(challengeToOperate);
-            return"give up";
+            return HttpStatus.OK;
         }
 
         if(request.isRefuse()){
             challengeToOperate.setStatus(ChallengeStatus.REFUSED);
             updateChallenge(challengeToOperate);
-            return"challenge refused";
-        } else return "ERROR - no operation selected";
+            return HttpStatus.OK;
+        } else return HttpStatus.BAD_REQUEST;
 
     }
 
 
-    public void deleteChallenge(Long id){
-        challengeRepository.deleteById(id);
+    public HttpStatus deleteChallenge(Long challengeId, Long userId){
+        Challenge challengeToDelete = getChallengeById(challengeId);
+
+        if(challengeToDelete.getChallenger() != userId) return  HttpStatus.BAD_REQUEST;
+        challengeRepository.deleteById(challengeId);
+        return  HttpStatus.OK;
     }
 
-    public Long authCheck(String jwt) throws Exception{
+
+
+
+
+    public Long authCheck(String jwt) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", jwt);
@@ -111,18 +125,19 @@ public class ChallengeService {
         try{
             response = restTemplate.exchange("http://localhost:8080/user/authcheck",
                     HttpMethod.POST, entity, Long.class).getBody();
-        } catch (HttpStatusCodeException exception){
-            int statusCode = exception.getStatusCode().value();
-           throw new Exception("Error - JWT is not valid or user service isn't up");
+        } catch (Exception e){
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
         }
 
-        if (response == null)  throw new Exception("Error - JWT is not valid or user service isn't up");
+        if (response == null)  throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
         else return response;
 
     }
 
 
-    // TEST TEST TEST TEST
+
+
+    /*
     public String authCheckTest(String jwt){
 
         HttpHeaders headers = new HttpHeaders();
@@ -143,4 +158,5 @@ public class ChallengeService {
         else  return "{\"response\":\"ok\" }";
 
     }
+     */
 }

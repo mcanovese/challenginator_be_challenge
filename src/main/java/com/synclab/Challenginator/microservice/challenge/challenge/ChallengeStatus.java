@@ -8,11 +8,6 @@ public enum ChallengeStatus {
     PENDING,
     ACCEPTED,
     REFUSED,
-    IN_PROGRESS,
     EVALUATING,
     TERMINATED
-
-
-
-
 }

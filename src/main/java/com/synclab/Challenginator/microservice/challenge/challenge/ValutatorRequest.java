@@ -13,6 +13,4 @@ public class ValutatorRequest {
 
     private Long challengeId;
     private ChallengeResult result;
-
-
 }

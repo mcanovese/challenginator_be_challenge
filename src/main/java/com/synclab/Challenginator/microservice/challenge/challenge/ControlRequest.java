@@ -11,13 +11,9 @@ import lombok.ToString;
 @ToString
 public class ControlRequest {
 
-
     private Long challengeId;
-
     private boolean accept;  // accetta sfida
     private boolean giveup; // arrenditi
     private boolean refuse; // rifiuta
-
-
 
 }
