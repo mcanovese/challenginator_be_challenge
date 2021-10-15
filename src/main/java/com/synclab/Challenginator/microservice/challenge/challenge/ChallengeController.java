@@ -27,8 +27,8 @@ public class ChallengeController {
 
     @GetMapping("/challenge")
     public List<Challenge> getChallenge(@RequestHeader(name="Authorization") String jwt)   {
-        challengeService.authCheck(jwt);
-        return challengeService.getALlChallenge(112L);
+       Long userId =  challengeService.authCheck(jwt);
+        return challengeService.getALlChallenge(userId);
     }
 
     @GetMapping("/challenge/{id}")
