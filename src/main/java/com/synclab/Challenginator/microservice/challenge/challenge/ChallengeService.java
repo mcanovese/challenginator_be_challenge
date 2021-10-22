@@ -1,5 +1,6 @@
 package com.synclab.Challenginator.microservice.challenge.challenge;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -63,41 +64,58 @@ public class ChallengeService {
        return HttpStatus.OK;
     }
 
-    public HttpStatus evaluateChallenge(ValutatorRequest request, Long valutator){
+    public List<Challenge> getChallengeToEvaluate(Long id){
+        return challengeRepository.findChallengesByEvaluator(id);
+    }
+
+
+
+
+    public Challenge evaluateChallenge(ValutatorRequest request, Long valutator){
         Challenge challengeToEvaluate = getChallengeById(request.getChallengeId());
         //verifica valutatore
         if(challengeToEvaluate.getEvaluator() == valutator){
             challengeToEvaluate.setResult(request.getResult());
+            challengeToEvaluate.setStatus(ChallengeStatus.TERMINATED);
             updateChallenge(challengeToEvaluate);
-            return HttpStatus.OK;
-        } else return HttpStatus.CONFLICT;
+            return challengeToEvaluate;
+        } else throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
     }
 
-    public HttpStatus userChallengeOperation(ControlRequest request, Long userId){
+    public Challenge userChallengeOperation(ControlRequest request, Long userId){
         Challenge challengeToOperate = getChallengeById(request.getChallengeId());
 
-        if(challengeToOperate.getChallenged() != userId) return HttpStatus.BAD_REQUEST;
+        if(challengeToOperate.getChallenged() != userId) throw  new HttpServerErrorException(HttpStatus.BAD_REQUEST);
 
 
         if(request.isAccept()){
             challengeToOperate.setTimestamp_acceptance(LocalDateTime.now());
             challengeToOperate.setStatus(ChallengeStatus.ACCEPTED);
             updateChallenge(challengeToOperate);
-            return HttpStatus.OK;
+            return challengeToOperate;
         }
 
         if(request.isGiveup()){
             challengeToOperate.setResult(ChallengeResult.GIVEUP);
             challengeToOperate.setStatus(ChallengeStatus.TERMINATED);
             updateChallenge(challengeToOperate);
-            return HttpStatus.OK;
+            return challengeToOperate;
         }
 
         if(request.isRefuse()){
             challengeToOperate.setStatus(ChallengeStatus.REFUSED);
             updateChallenge(challengeToOperate);
-            return HttpStatus.OK;
-        } else return HttpStatus.BAD_REQUEST;
+            return challengeToOperate;
+        }
+
+        if(request.isComplete()){
+            challengeToOperate.setStatus(ChallengeStatus.EVALUATING);
+            updateChallenge(challengeToOperate);
+            return challengeToOperate;
+        } else throw  new HttpServerErrorException(HttpStatus.BAD_REQUEST);
+
+
+
 
     }
 

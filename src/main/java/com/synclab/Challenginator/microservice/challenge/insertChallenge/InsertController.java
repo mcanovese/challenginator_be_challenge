@@ -19,6 +19,8 @@ public class InsertController {
     private ChallengeService challengeService;
 
 
+
+
     @PostMapping
     public HttpStatus insert(@RequestBody InsertRequest request, @RequestHeader(name="Authorization") String jwt) throws Exception {
         Long userid = challengeService.authCheck(jwt);

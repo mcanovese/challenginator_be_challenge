@@ -21,8 +21,10 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long>{
     List<Challenge> getUserChallengeByStatus(ChallengeStatus status, Long id);
 
 
+
     List<Challenge> findChallengesByChallenged(Long data); //sfidato
     List<Challenge> findChallengesByChallenger(Long data); //sfidante
+    List<Challenge> findChallengesByEvaluator(Long data); // sfide che devo valutare
     Challenge getChallengeById(Long id);
 
 }

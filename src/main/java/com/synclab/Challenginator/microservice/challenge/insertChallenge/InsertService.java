@@ -44,7 +44,8 @@ public class InsertService {
                 HttpMethod.GET, entity, new ParameterizedTypeReference<BossList>() {
                 }).getBody();
 
-        return response.getBossOfUser();
+       return response.getBossOfUser();
+
     }
 
 

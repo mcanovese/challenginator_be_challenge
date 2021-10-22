@@ -14,15 +14,15 @@ import java.util.List;
 public class ChallengeController {
 
     private InsertService insertService;
+
     private ChallengeService challengeService;
 
     @Autowired
     private RestTemplate restTemplate;
 
 
-    public ChallengeController(ChallengeService challengeService, InsertService insertService) {
+    public ChallengeController(ChallengeService challengeService ) {
         this.challengeService = challengeService;
-        this.insertService = insertService;
     }
 
     @GetMapping("/challenge")
@@ -56,17 +56,23 @@ public class ChallengeController {
     }
 
     @PostMapping("/challenge/evaluate") //Valutazione da parte del valutatore
-    public HttpStatus evaluate(@RequestBody ValutatorRequest request,
+    public Challenge evaluate(@RequestBody ValutatorRequest request,
                            @RequestHeader(name="Authorization") String jwt)  {
         Long idValutatore = challengeService.authCheck(jwt); //recupero id di chi valuta e verifico token
        return challengeService.evaluateChallenge(request,idValutatore);
     }
 
+    @GetMapping("/challenge/evaluate")
+    public List<Challenge> getChallengeEvaluate( @RequestHeader(name="Authorization") String jwt)
+    {
+        Long userId = challengeService.authCheck(jwt);
+        return challengeService.getChallengeToEvaluate(userId);
+    }
 
 
     //operazioni utente sulla challenge, accetta e/o rifiuta in base al contenuto della request
     @PostMapping("/challenge/control")
-    public HttpStatus control(@RequestBody ControlRequest request,
+    public Challenge control(@RequestBody ControlRequest request,
                               @RequestHeader(name="Authorization") String jwt)   {
         Long userId = challengeService.authCheck(jwt); //recupero id di chi valuta e verifico token
         return challengeService.userChallengeOperation(request,userId);
