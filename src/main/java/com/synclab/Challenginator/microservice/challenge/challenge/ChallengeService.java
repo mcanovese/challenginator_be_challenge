@@ -87,7 +87,6 @@ public class ChallengeService {
 
         if(challengeToOperate.getChallenged() != userId) throw  new HttpServerErrorException(HttpStatus.BAD_REQUEST);
 
-
         if(request.isAccept()){
             challengeToOperate.setTimestamp_acceptance(LocalDateTime.now());
             challengeToOperate.setStatus(ChallengeStatus.ACCEPTED);
@@ -113,10 +112,6 @@ public class ChallengeService {
             updateChallenge(challengeToOperate);
             return challengeToOperate;
         } else throw  new HttpServerErrorException(HttpStatus.BAD_REQUEST);
-
-
-
-
     }
 
 
@@ -127,9 +122,6 @@ public class ChallengeService {
         challengeRepository.deleteById(challengeId);
         return  HttpStatus.OK;
     }
-
-
-
 
 
     public Long authCheck(String jwt) {

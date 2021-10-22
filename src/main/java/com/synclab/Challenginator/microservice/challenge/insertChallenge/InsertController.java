@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class InsertController {
 
-
     private InsertService insertService;
     private ChallengeService challengeService;
 
 
-
-
+    //inserimento di una challenge
     @PostMapping
     public HttpStatus insert(@RequestBody InsertRequest request, @RequestHeader(name="Authorization") String jwt) throws Exception {
         Long userid = challengeService.authCheck(jwt);
