@@ -16,6 +16,10 @@ import javax.management.BadAttributeValueExpException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/*
+service principale delle sfide (non gestisce inserimento che è gestito a parte in un servizio dedicato)
+
+ */
 
 @Service
 public class ChallengeService {
@@ -58,19 +62,18 @@ public class ChallengeService {
 
 
     }
-
+    // inserisco nuova sfida
     public HttpStatus insertNewChallenge(Challenge challenge){
         challengeRepository.save(challenge);
        return HttpStatus.OK;
     }
 
+    //ottengo challenge da valutare in qualità di valutatore
     public List<Challenge> getChallengeToEvaluate(Long id){
         return challengeRepository.findChallengesByEvaluator(id);
     }
 
-
-
-
+    // valuto challenge
     public Challenge evaluateChallenge(ValutatorRequest request, Long valutator){
         Challenge challengeToEvaluate = getChallengeById(request.getChallengeId());
         //verifica valutatore
@@ -82,6 +85,7 @@ public class ChallengeService {
         } else throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
     }
 
+    //posso effettare ACCETTAZIONE ARRESA RIFIUTO COMPLETAMENTO di una challenge a seconda di cosa contiene la richiesta
     public Challenge userChallengeOperation(ControlRequest request, Long userId){
         Challenge challengeToOperate = getChallengeById(request.getChallengeId());
 
@@ -114,7 +118,7 @@ public class ChallengeService {
         } else throw  new HttpServerErrorException(HttpStatus.BAD_REQUEST);
     }
 
-
+    // cancella una challenge
     public HttpStatus deleteChallenge(Long challengeId, Long userId){
         Challenge challengeToDelete = getChallengeById(challengeId);
 
@@ -123,7 +127,7 @@ public class ChallengeService {
         return  HttpStatus.OK;
     }
 
-
+    // verifico autenticazione contattando il micorservizio utenti
     public Long authCheck(String jwt) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -143,30 +147,4 @@ public class ChallengeService {
         else return response;
 
     }
-
-
-
-
-    /*
-    public String authCheckTest(String jwt){
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", jwt);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        // Contatto il servizio utenti ed ottengo JSON con dettagli utente, se jwt is valid
-        String response = null;
-        try{
-            response = restTemplate.exchange("http://localhost:8080/user/authcheck",
-                    HttpMethod.POST, entity, String.class).getBody();
-        } catch (HttpStatusCodeException exception){
-            int statusCode = exception.getStatusCode().value();
-            return "{\"response\":\"jwt is not valid or user service isn't up \" }";
-        }
-
-        if (response.isEmpty())   return "{\"response\":\"jwt is not valid or user service isn't up\" }";
-        else  return "{\"response\":\"ok\" }";
-
-    }
-     */
 }

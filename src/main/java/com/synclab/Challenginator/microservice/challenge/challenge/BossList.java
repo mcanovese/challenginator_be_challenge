@@ -3,8 +3,14 @@ package com.synclab.Challenginator.microservice.challenge.challenge;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 
+
+/*
+classe che gestisce il ritorno della gerarchia  dei superiori di un utente
+server per determinare il valutatore di una sfida
+ */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BossList {
     private Long bossOfUserBoss;
     private Long userId;

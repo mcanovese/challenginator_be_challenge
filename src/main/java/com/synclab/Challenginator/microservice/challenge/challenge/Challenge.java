@@ -6,6 +6,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
+
+/*
+Definizione della Challenge
+ */
+
 @Getter
 @Setter
 @EqualsAndHashCode

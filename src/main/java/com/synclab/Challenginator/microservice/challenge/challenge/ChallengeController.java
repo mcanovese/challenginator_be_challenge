@@ -9,6 +9,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 
+/*
+ REST controller del microservizio
+ l'inserimento è delegato ad un controller specifico
+ */
+
 @RestController
 public class ChallengeController {
 
